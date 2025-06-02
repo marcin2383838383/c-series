@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <fcntl.h>
 
-
+// Test comment
 bool assertOpenDir(const char *path,DIR **dstDirStream){
 
     if((*dstDirStream = opendir(path))== NULL) {
