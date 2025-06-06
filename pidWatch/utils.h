@@ -9,17 +9,21 @@
 #include <stdbool.h>
 #include <fcntl.h>
 
+#define DEBUG 0
+
+void add_NewEntry(const char*);
 
 bool assert_OpenDir(const char *path, DIR **);
 
 bool assert_Database(const char*);
 
-void get_PidDetail(const char *);
+void get_PidDetail_pidname(const char*);
+
+void get_PidDetail_cmd(const char*);
 
 bool has_NewEntry(const char*, const char *);
 
-void add_NewEntry(const char*);
+void init_Database();
 
 void track_DirectoryChanges(const char *);
 
-void init_Database();

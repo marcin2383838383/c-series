@@ -94,79 +94,149 @@ void add_NewEntry(const char* newPid)
     close(newEntryWithNewlineChar_len);
 }
 
-
 void get_PidDetail_pidname(const char*pid)
 {
-    FILE *fStream = NULL;
-    char path[256] = {0};
-    strcat(path,"/proc/");
-    strcat(path,pid);
-    strcat(path,"/status");
+    if(DEBUG){
+        FILE *fStream = NULL;
+        char path[256] = {0};
+        strcat(path,"/proc/");
+        strcat(path,pid);
+        strcat(path,"/status");
 
-    fStream = fopen(path,"r");
-    if(fStream == NULL){
-        printf("Error, can't open file: %s -->%s\n",path, errno);
-    }else{
-        char *line = NULL;
-        size_t lineLen = 0;
+        fStream = fopen(path,"r");
+        if(fStream == NULL){
+            printf("Error, can't open file: %s -->%s\n",path, errno);
+        }else{
+            char *line = NULL;
+            size_t lineLen = 0;
 
-        while((getline(&line,&lineLen,fStream))!=-1){
-            if(strstr(line,"Name")!=NULL){
-                printf("%s",line);
+            while((getline(&line,&lineLen,fStream))!=-1){
+                if(strstr(line,"Name")!=NULL){
+                    printf("%s",line);
+                }
             }
+            free(line);
+            fclose(fStream);
         }
-        free(line);
+    }else{
+        FILE *fStream = NULL;
+        char path[256] = {0};
+        strcat(path,"/proc/");
+        strcat(path,pid);
+        strcat(path,"/status");
+
+        fStream = fopen(path,"r");
+        if(fStream == NULL){
+            // printf("Error, can't open file: %s -->%s\n",path, errno);
+        }else{
+            char *line = NULL;
+            size_t lineLen = 0;
+
+            while((getline(&line,&lineLen,fStream))!=-1){
+                if(strstr(line,"Name")!=NULL){
+                    // printf("%s",line);
+                }
+            }
+            free(line);
+            fclose(fStream);
+        }
     }
 
-    fclose(fStream);
+
 }
+
 void get_PidDetail_cmd(const char*pid)
 {
-    FILE *fStream = NULL;
-    char path[256] = {0};
-    strcat(path,"/proc/");
-    strcat(path,pid);
-    strcat(path,"/cmdline");
 
-    fStream = fopen(path,"r");
-    if(fStream != NULL){
-        char line[512] = {0};
-        size_t lineLen = 0;
-        size_t bytesRead;
-        printf("CMD: ");
-        while(
-            (bytesRead = fread(line,1,sizeof(char),fStream))>0
-        ){
-            printf("%s", line);
+    if(DEBUG){
+        FILE *fStream = NULL;
+        char path[256] = {0};
+        strcat(path,"/proc/");
+        strcat(path,pid);
+        strcat(path,"/cmdline");
+
+        fStream = fopen(path,"r");
+        if(fStream != NULL){
+            char line[512] = {0};
+            size_t lineLen = 0;
+            size_t bytesRead;
+            printf("CMD: ");
+            while(
+                (bytesRead = fread(line,1,sizeof(char),fStream))>0
+            ){
+                printf("%s", line);
+            }
+            printf("\n");
+
+        }else{
+                printf("Error, can't open file: %s -->%d\n",path, errno);
         }
-        printf("\n");
-
+        fclose(fStream);
     }else{
-            printf("Error, can't open file: %s -->%d\n",path, errno);
+        FILE *fStream = NULL;
+        char path[256] = {0};
+        strcat(path,"/proc/");
+        strcat(path,pid);
+        strcat(path,"/cmdline");
+
+        fStream = fopen(path,"r");
+        if(fStream != NULL){
+            char line[512] = {0};
+            size_t lineLen = 0;
+            size_t bytesRead;
+            while(
+                (bytesRead = fread(line,1,sizeof(char),fStream))>0
+            ){
+                ;
+            }
+
+        }else{
+                printf("Error, can't open file: %s -->%d\n",path, errno);
+        }
+        fclose(fStream);
     }
-    fclose(fStream);
 
 }
 
 void track_DirectoryChanges(const char *path)
 {
-    DIR *dirStream = NULL;
-    struct dirent *dirNameAsPid = NULL;
-    assert_OpenDir("/proc",&dirStream);
+
+    if(DEBUG){
+        DIR *dirStream = NULL;
+        struct dirent *dirNameAsPid = NULL;
+        assert_OpenDir("/proc",&dirStream);
 
 
-    while ( (dirNameAsPid = readdir(dirStream)) != NULL) {
+        while ( (dirNameAsPid = readdir(dirStream)) != NULL) {
 
-            char pid[256] = {0};
-            strncpy(pid,dirNameAsPid->d_name,strlen(dirNameAsPid->d_name));
+                char pid[256] = {0};
+                strncpy(pid,dirNameAsPid->d_name,strlen(dirNameAsPid->d_name));
 
-            if(has_NewEntry(pid,"proc_database")){
+                if(has_NewEntry(pid,"proc_database")){
 
-                get_PidDetail_pidname(pid);
-                get_PidDetail_cmd(pid);
-                printf("[*] New entry detect! --> %s\n", pid);
-                add_NewEntry(pid);
-            };
-    };
+                    get_PidDetail_pidname(pid);
+                    get_PidDetail_cmd(pid);
+                    printf("[*] New entry detect! --> %s\n", pid);
+                    add_NewEntry(pid);
+                };
+        };
+    }else{
+        DIR *dirStream = NULL;
+        struct dirent *dirNameAsPid = NULL;
+        assert_OpenDir("/proc",&dirStream);
+
+
+        while ( (dirNameAsPid = readdir(dirStream)) != NULL) {
+
+                char pid[256] = {0};
+                strncpy(pid,dirNameAsPid->d_name,strlen(dirNameAsPid->d_name));
+
+                if(has_NewEntry(pid,"proc_database")){
+                    get_PidDetail_pidname(pid);
+                    get_PidDetail_cmd(pid);
+                    add_NewEntry(pid);
+                };
+        };
+        }
     
 }
