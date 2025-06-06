@@ -1,11 +1,13 @@
 #include "utils.h"
-#include <stdbool.h>
-#define DEBUG 0
+
+// #define DEBUG 1
 
 
 int main()
 {
+    const char * monitored_dir = "/proc";
     const char * path = "proc_database";
+    int sleep_time = 0.1;
 
     if(DEBUG)
     {
@@ -22,27 +24,23 @@ int main()
 
         while (true)
         {
-            printf("[*] tracking: %s\n","/proc");
-            track_DirectoryChanges("/proc");
-            sleep(5);
+            printf("[*] tracking: %s\n",monitored_dir);
+            track_DirectoryChanges(monitored_dir);
+            sleep(sleep_time);
         };
     }else
     {
         if(assert_Database(path)){
-            // printf("[*] Databse exist!\n");
-            // printf("[*] Skipping ...\n");
+            ;
         }
         else{
-            // printf("[*] Init database!\n"); 
             init_Database();
         }
 
-        // printf("[*] Start tracking %s\n",path);
         while (true)
         {
-            // printf("[*] tracking: %s\n","/proc");
-            track_DirectoryChanges("/proc");
-            sleep(5);
+            track_DirectoryChanges(monitored_dir);
+            sleep(sleep_time);
         };
     }
 

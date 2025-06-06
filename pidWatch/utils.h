@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <fcntl.h>
 
-#define DEBUG 0
+#define DEBUG 1
 
 void add_NewEntry(const char*);
 
