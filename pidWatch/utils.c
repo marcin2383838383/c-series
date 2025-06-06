@@ -32,11 +32,11 @@ void init_Database()
 
         char dirName[256]   = {0};
         size_t dirNameLen   = strlen(dir->d_name);
-        size_t newDirNameLen    = strlen(dirName)+1;
+        dirNameLen++;
 
         strncpy(dirName,dir->d_name, dirNameLen);
         strcat(dirName,"\n");
-        write(fd,dirName,newDirNameLen);
+        write(fd,dirName,dirNameLen);
         
     };
     close(fd);
