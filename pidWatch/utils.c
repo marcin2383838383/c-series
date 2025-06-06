@@ -95,7 +95,8 @@ void add_NewEntry(const char* newPid)
 }
 
 
-void get_PidDetail_pidname(const char*pid){
+void get_PidDetail_pidname(const char*pid)
+{
     FILE *fStream = NULL;
     char path[256] = {0};
     strcat(path,"/proc/");
@@ -111,7 +112,7 @@ void get_PidDetail_pidname(const char*pid){
 
         while((getline(&line,&lineLen,fStream))!=-1){
             if(strstr(line,"Name")!=NULL){
-                printf("%s\n",line);
+                printf("%s",line);
             }
         }
         free(line);
@@ -119,7 +120,8 @@ void get_PidDetail_pidname(const char*pid){
 
     fclose(fStream);
 }
-void get_PidDetail_cmd(const char*pid){
+void get_PidDetail_cmd(const char*pid)
+{
     FILE *fStream = NULL;
     char path[256] = {0};
     strcat(path,"/proc/");
@@ -128,17 +130,21 @@ void get_PidDetail_cmd(const char*pid){
 
     fStream = fopen(path,"r");
     if(fStream != NULL){
-        char *line = NULL;
+        char line[512] = {0};
         size_t lineLen = 0;
-        
-        getline(&line,&lineLen,fStream);
-        printf("CMD: %s\n",line);
-        free(line);
-        fclose(fStream);
+        size_t bytesRead;
+        printf("CMD: ");
+        while(
+            (bytesRead = fread(line,1,sizeof(char),fStream))>0
+        ){
+            printf("%s", line);
+        }
+        printf("\n");
+
     }else{
             printf("Error, can't open file: %s -->%d\n",path, errno);
     }
-
+    fclose(fStream);
 
 }
 
