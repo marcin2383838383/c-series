@@ -1,5 +1,5 @@
 #include "utils.h"
-
+#include <pthread.h>
 
 bool assert_OpenDir(const char *path,DIR **dstDirStream)
 {
@@ -95,8 +95,7 @@ void add_NewEntry(const char* newPid)
 }
 
 
-void get_PidDetail(const char*pid){
-
+void get_PidDetail_pidname(const char*pid){
     FILE *fStream = NULL;
     char path[256] = {0};
     strcat(path,"/proc/");
@@ -119,6 +118,26 @@ void get_PidDetail(const char*pid){
     }
 
     fclose(fStream);
+}
+void get_PidDetail_cmd(const char*pid){
+    FILE *fStream = NULL;
+    char path[256] = {0};
+    strcat(path,"/proc/");
+    strcat(path,pid);
+    strcat(path,"/cmdline");
+
+    fStream = fopen(path,"r");
+    if(fStream != NULL){
+        char *line = NULL;
+        size_t lineLen = 0;
+        
+        getline(&line,&lineLen,fStream);
+        printf("CMD: %s\n",line);
+        free(line);
+        fclose(fStream);
+    }else{
+            printf("Error, can't open file: %s -->%d\n",path, errno);
+    }
 
 
 }
@@ -137,7 +156,8 @@ void track_DirectoryChanges(const char *path)
 
             if(has_NewEntry(pid,"proc_database")){
 
-                get_PidDetail(pid);
+                get_PidDetail_pidname(pid);
+                get_PidDetail_cmd(pid);
                 printf("[*] New entry detect! --> %s\n", pid);
                 add_NewEntry(pid);
             };
