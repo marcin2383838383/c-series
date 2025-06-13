@@ -105,7 +105,8 @@ void get_PidDetail_pidname(const char*pid)
 
         fStream = fopen(path,"r");
         if(fStream == NULL){
-            printf("Error, can't open file: %s -->%s\n",path, errno);
+
+            printf("Error, can't open file: %s -->%d\n",path, errno);
         }else{
             char *line = NULL;
             size_t lineLen = 0;
@@ -167,11 +168,11 @@ void get_PidDetail_cmd(const char*pid)
                 printf("%s", line);
             }
             printf("\n");
-
+            fclose(fStream);
         }else{
                 printf("Error, can't open file: %s -->%d\n",path, errno);
         }
-        fclose(fStream);
+
     }else{
         FILE *fStream = NULL;
         char path[256] = {0};

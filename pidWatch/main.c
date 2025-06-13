@@ -7,10 +7,9 @@ int main()
 {
     const char * monitored_dir = "/proc";
     const char * path = "proc_database";
-    int sleep_time = 0.1;
+    int sleep_time = 1;
 
-    if(DEBUG)
-    {
+    if(DEBUG){
         if(assert_Database(path)){
             printf("[*] Databse exist!\n");
             printf("[*] Skipping ...\n");
@@ -22,14 +21,14 @@ int main()
 
         printf("[*] Start tracking %s\n",path);
 
-        while (true)
-        {
+        while (true){
+
             printf("[*] tracking: %s\n",monitored_dir);
             track_DirectoryChanges(monitored_dir);
             sleep(sleep_time);
+            
         };
-    }else
-    {
+    }else{
         if(assert_Database(path)){
             ;
         }
